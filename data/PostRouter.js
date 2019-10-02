@@ -24,13 +24,14 @@ router.post('/', (req, res) => {
 router.post('/:id/comments', (req, res) => {
   const commentData = req.body;
   const id = req.params.id;
+  commentData.post_id = id;
   if (!id) {
     res.status(404).json({ message: "The post with the specified ID does not exist." });
   } else if (!commentData.text) {
     res.status(400).json({ errorMessage: "Please provide text for the comment." });
   } else {
-    db.findById(id)
-      .then(post => {
+    db.insert(commentData)
+      .then(comment_id => {
         res.status(201).json({ message: `Commented: ${commentData.text}` });
       })
       .catch(err => {
@@ -65,7 +66,6 @@ router.get('/:id', (req, res) => {
 });
 
 router.get('/:id/comments', (req, res) => {
-  const commentData = req.body;
   const id = req.params.id;
   if (!id) {
     res.status(404).json({ message: "The post with the specified ID does not exist." });
